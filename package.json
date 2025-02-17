@@ -1,11 +1,11 @@
 {
-  "name": "booqable-showtime",
+  "name": "bq-showtime",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "author": {
-    "name": "Mohit Yadav",
-    "email": "mohit@mohitya.dev",
-    "url": "https://mohitya.dev"
+    "name": "Yaroslav Vovchenko",
+    "email": "yaroslav@booqable.com",
+    "url": "https://github.com/thecoorum"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.265",
@@ -47,7 +47,6 @@
     "start": "next start",
     "lint": "next lint",
     "remotion": "remotion studio",
-    "render": "remotion render",
-    "deploy": "node deploy.mjs"
+    "render": "remotion render"
   }
 }
