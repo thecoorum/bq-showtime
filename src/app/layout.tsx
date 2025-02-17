@@ -1,9 +1,10 @@
-import "../../styles/global.css";
 import { Metadata, Viewport } from "next";
 
+import "@/app/global.css";
+
 export const metadata: Metadata = {
-  title: "Remotion and Next.js",
-  description: "Remotion and Next.js",
+  title: "showtime | booqable",
+  description: "showtime composer made exclusively for booqable",
 };
 
 export const viewport: Viewport = {
@@ -12,14 +13,12 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className="bg-background">{children}</body>
+      <body>{children}</body>
     </html>
   );
-}
+};
+
+export default RootLayout;
