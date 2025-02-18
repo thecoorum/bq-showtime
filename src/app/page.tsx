@@ -1,50 +1,61 @@
 "use client";
 
-import { Player } from "@remotion/player";
-import type { NextPage } from "next";
-import React, { useMemo, useState } from "react";
-import { z } from "zod";
-import {
-  defaultProps,
-  CompositionProps,
-  DURATION_IN_FRAMES,
-  VIDEO_FPS,
-  VIDEO_HEIGHT,
-  VIDEO_WIDTH,
-} from "@/types/constants";
-import { Main } from "../remotion/MyComp/Main";
+import { useRef } from "react";
 
-const Home: NextPage = () => {
-  const [text, setText] = useState<string>(defaultProps.title);
+import { Player, type PlayerRef } from "@remotion/player";
+import { Play } from "lucide-react";
 
-  const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
-    return {
-      title: text,
-    };
-  }, [text]);
+import { usePlayer } from "@/hooks/use-player";
+
+import { Component as Composition } from "@/remotion/root";
+
+import { DURATION_IN_FRAMES } from "@/types/constants";
+
+const Home = () => {
+  const playerRef = useRef<PlayerRef>(null);
+
+  const { isPlaying } = usePlayer(playerRef);
+
+  const handlePlay = () => {
+    playerRef.current?.play();
+  };
 
   return (
-    <div>
-      <div className="max-w-screen-md m-auto mb-5">
-        <div className="overflow-hidden rounded-geist shadow-[0_0_200px_rgba(0,0,0,0.15)] mb-10 mt-16">
-          <Player
-            component={Main}
-            inputProps={inputProps}
-            durationInFrames={DURATION_IN_FRAMES}
-            fps={VIDEO_FPS}
-            compositionHeight={VIDEO_HEIGHT}
-            compositionWidth={VIDEO_WIDTH}
-            style={{
-              // Can't use tailwind class for width since player's default styles take presedence over tailwind's,
-              // but not over inline styles
-              width: "100%",
-            }}
-            controls
-            autoPlay
-            loop
-          />
-        </div>
-      </div>
+    <div className="flex flex-col justify-center items-center h-[100svh] relative bg-black">
+      <Player
+        ref={playerRef}
+        component={Composition}
+        compositionWidth={1920}
+        compositionHeight={1080}
+        className="!w-full !h-auto aspect-video"
+        durationInFrames={DURATION_IN_FRAMES}
+        fps={30}
+        inputProps={{
+          participants: [
+            {
+              department: "Marketing",
+              name: "Nathan Crossley",
+            },
+            {
+              department: "Engineering",
+              name: "Yaroslav Vovchenko",
+            },
+            {
+              department: "Engineering",
+              name: "Filip Defar",
+            },
+          ],
+          author: "Johan van Zonneveld",
+        }}
+        clickToPlay
+        doubleClickToFullscreen
+      />
+      {!isPlaying && (
+        <Play
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-white size-8"
+          onClick={handlePlay}
+        />
+      )}
     </div>
   );
 };

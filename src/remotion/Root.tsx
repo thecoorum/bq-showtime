@@ -26,7 +26,7 @@ const schema = z.object({
   author: z.string(),
 });
 
-const Component = ({ participants, author }: z.infer<typeof schema>) => {
+export const Component = ({ participants, author }: z.infer<typeof schema>) => {
   return (
     <AbsoluteFill className="flex justify-center items-center bg-black">
       <OffthreadVideo src={staticFile("st-intro.mp4")} />

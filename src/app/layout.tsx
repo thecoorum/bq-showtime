@@ -1,5 +1,3 @@
-import localFont from "next/font/local";
-
 import type { Metadata, Viewport } from "next";
 
 import "@/global.css";
@@ -15,25 +13,9 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const itc = localFont({
-  src: [
-    {
-      path: "../../public/itc-bold.otf",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../../public/itc-demi.otf",
-      weight: "400",
-      style: "normal",
-    },
-  ],
-  variable: "--itc-font",
-});
-
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en" className={itc.className}>
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

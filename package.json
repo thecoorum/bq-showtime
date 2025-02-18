@@ -8,6 +8,7 @@
     "url": "https://github.com/thecoorum"
   },
   "dependencies": {
+    "@number-flow/react": "^0.5.5",
     "@remotion/bundler": "4.0.265",
     "@remotion/cli": "4.0.265",
     "@remotion/google-fonts": "4.0.265",
@@ -19,6 +20,8 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
     "clsx": "2.1.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.475.0",
     "next": "15.1.6",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -45,7 +48,7 @@
     "typescript": "5.5.4"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
