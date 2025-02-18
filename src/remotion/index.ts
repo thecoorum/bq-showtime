@@ -1,5 +1,6 @@
 import { registerRoot } from "remotion";
-import { RemotionRoot } from "./Root";
-import "../../styles/global.css";
+import { Root } from "./root";
 
-registerRoot(RemotionRoot);
+import "../global.css";
+
+registerRoot(Root);
