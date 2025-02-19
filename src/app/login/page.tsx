@@ -21,7 +21,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useLogin } from "@/mutations/auth/login";
 
 export const schema = z.object({
-  email: z.string().email(),
+  email: z
+    .string()
+    .email()
+    .refine((email) => email.endsWith("@booqable.com"), {
+      message: "Only emails with the @booqable.com domain are supported",
+    }),
   redirectUrl: z.string(),
 });
 
@@ -69,11 +74,7 @@ const LoginPage = () => {
                       </FormControl>
                     </div>
                     <LoadingButton
-                      disabled={
-                        !form.formState.isValid ||
-                        !form.formState.isDirty ||
-                        mutation.isPending
-                      }
+                      disabled={!form.formState.isDirty || mutation.isPending}
                       className="cursor-pointer"
                       loading={mutation.isPending}
                     >

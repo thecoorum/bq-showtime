@@ -85,10 +85,7 @@ const ConfirmPage = () => {
                   <div className="flex flex-col gap-2 sm:gap-4">
                     <div>
                       <FormControl>
-                        <InputOTP
-                          maxLength={6}
-                          {...field}
-                        >
+                        <InputOTP maxLength={6} {...field}>
                           <InputOTPGroup>
                             <InputOTPSlot index={0} />
                             <InputOTPSlot index={1} />
@@ -102,11 +99,7 @@ const ConfirmPage = () => {
                     </div>
                     <LoadingButton
                       className="cursor-pointer"
-                      disabled={
-                        !form.formState.isDirty ||
-                        !form.formState.isValid ||
-                        mutation.isPending
-                      }
+                      disabled={!form.formState.isDirty || mutation.isPending}
                       loading={mutation.isPending}
                     >
                       Log in

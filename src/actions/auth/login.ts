@@ -15,8 +15,17 @@ export const login = async (data: LoginFormSchema) => {
   });
 
   if (error) {
-    console.log("error");
-    throw new Error(error.message);
+    let message = error.message;
+
+    switch (error.code) {
+      case "otp_disabled":
+        message = "There is no account associated with this email.";
+        break;
+      default:
+        break;
+    }
+
+    throw new Error(message);
   }
 
   return redirect(
