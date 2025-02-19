@@ -19,7 +19,7 @@ import { Text } from "./components/text";
 const schema = z.object({
   participants: z.array(
     z.object({
-      department: z.string().optional(),
+      department: z.string().optional().nullable(),
       name: z.string(),
     }),
   ),

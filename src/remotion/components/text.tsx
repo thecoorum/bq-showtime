@@ -9,7 +9,7 @@ export const Text = ({
   config,
 }: {
   name: string;
-  department?: string;
+  department?: string | null;
   config: {
     in: number;
     duration: number;

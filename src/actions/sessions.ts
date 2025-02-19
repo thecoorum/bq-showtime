@@ -4,10 +4,18 @@ import { createClient } from "@/lib/supabase/server";
 import { getUpcomingFriday } from "@/lib/utils";
 
 import type { Tables } from "@/database.types";
-import { UpcomingSessionFormSchema } from "@/app/home";
+import type { UpcomingSessionFormSchema } from "@/app/home";
 
 export interface SessionResponse extends Tables<"sessions"> {
-  participants: Tables<"participants">[];
+  author: {
+    name: string | null;
+  };
+  participants: {
+    name: string | null;
+    department: {
+      name: string | null;
+    } | null;
+  }[];
 }
 
 export interface UpcomingSessionResponse extends Tables<"sessions"> {
@@ -23,6 +31,7 @@ export interface UpdateSessionResponse {
 }
 
 export const getSession = async (id: string): Promise<SessionResponse> => {
+  console.log("fetching session", id);
   const supabase = await createClient();
 
   const {
@@ -33,10 +42,14 @@ export const getSession = async (id: string): Promise<SessionResponse> => {
     throw new Error("Unauthorized");
   }
 
-  const sessionReq = supabase.from("sessions").select().eq("id", id).single();
+  const sessionReq = supabase
+    .from("sessions")
+    .select("*, author:users!sessions_author_id_fkey(name)")
+    .eq("id", id)
+    .single();
   const participantsReq = supabase
     .from("participants")
-    .select()
+    .select("...users(name, department:departments(name))")
     .eq("session_id", id);
 
   const [session, participants] = await Promise.all([
@@ -45,6 +58,7 @@ export const getSession = async (id: string): Promise<SessionResponse> => {
   ]);
 
   if (session.error || participants.error) {
+    console.log("session error", session.error, participants.error);
     throw new Error(
       [session.error?.message, participants.error?.message]
         .filter(Boolean)

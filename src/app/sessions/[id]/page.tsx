@@ -1,71 +1,42 @@
-"use client";
+import { SessionPlayer } from "./player";
 
-import { useRef } from "react";
+import {
+  QueryClient,
+  HydrationBoundary,
+  dehydrate,
+} from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { useSession } from "@/queries/session";
 
-import { Player, type PlayerRef } from "@remotion/player";
-import { Play } from "lucide-react";
+import type { SessionResponse } from "@/actions/sessions";
 
-import { usePlayer } from "@/hooks/use-player";
+const SessionPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const queryClient = new QueryClient();
 
-import { Component as Composition } from "@/remotion/root";
+  const { id } = await params;
 
-import { DURATION_IN_FRAMES } from "@/types/constants";
+  try {
+    await queryClient.prefetchQuery(useSession(id));
+  } catch (error) {
+    console.error("session error", error);
+  }
 
-const SessionPage = () => {
-  const playerRef = useRef<PlayerRef>(null);
+  const session = (await queryClient.getQueryData([
+    "sessions",
+    id,
+  ])) as SessionResponse;
 
-  const { isPlaying } = usePlayer(playerRef);
+  console.log("session", session);
 
-  const handlePlay = () => {
-    playerRef.current?.play();
-  };
+  if (!session) {
+    notFound();
+  }
 
   return (
-    <div className="flex flex-col justify-center items-center h-full relative bg-black">
-      <Player
-        ref={playerRef}
-        component={Composition}
-        compositionWidth={1920}
-        compositionHeight={1080}
-        className="!w-full !h-auto aspect-video"
-        durationInFrames={DURATION_IN_FRAMES}
-        fps={30}
-        inputProps={{
-          participants: [
-            {
-              department: "Marketing",
-              name: "Nathan Crossley",
-            },
-            {
-              department: "Engineering",
-              name: "Yaroslav Vovchenko",
-            },
-            {
-              department: "Engineering",
-              name: "Filip Defar",
-            },
-          ],
-          author: "Johan van Zonneveld",
-        }}
-        clickToPlay
-        doubleClickToFullscreen
-        acknowledgeRemotionLicense
-      />
-      {!isPlaying && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center backdrop-blur-lg">
-          <Button
-            size="lg"
-            variant="outline"
-            className="cursor-pointer"
-            onClick={handlePlay}
-          >
-            <Play className="text-white" />
-          </Button>
-        </div>
-      )}
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <SessionPlayer id={id} />
+    </HydrationBoundary>
   );
 };
 
