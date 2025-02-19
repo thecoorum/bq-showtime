@@ -10,10 +10,12 @@ export const usePlayer = (ref: RefObject<PlayerRef | null>) => {
 
     const onPlay: CallbackListener<"play"> = () => {
       setIsPlaying(true);
+      ref.current?.requestFullscreen();
     };
 
     const onPause: CallbackListener<"pause"> = () => {
       setIsPlaying(false);
+      ref.current?.exitFullscreen();
     };
 
     ref.current.addEventListener("play", onPlay);

@@ -58,28 +58,28 @@ export type Database = {
       participants: {
         Row: {
           created_at: string | null
-          showtime_id: string
+          session_id: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
-          showtime_id: string
+          session_id: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
-          showtime_id?: string
+          session_id?: string
           updated_at?: string | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "participants_showtime_id_fkey"
-            columns: ["showtime_id"]
+            foreignKeyName: "participants_session_id_fkey"
+            columns: ["session_id"]
             isOneToOne: false
-            referencedRelation: "showtimes"
+            referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
           {
@@ -91,7 +91,7 @@ export type Database = {
           },
         ]
       }
-      showtimes: {
+      sessions: {
         Row: {
           author_id: string
           created_at: string | null
@@ -115,7 +115,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "showtimes_author_id_fkey"
+            foreignKeyName: "sessions_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "users"

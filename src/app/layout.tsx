@@ -32,7 +32,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <body className={`${mono.className} ${mono.variable} antialiased`}>
         <NuqsAdapter>
           <QueryProvider>
-            {children}
+            <div className="relative flex flex-col flex-1 h-svh p-2 md:p-4 bg-background">
+              <main className="flex-1 bg-black overflow-y-auto rounded-lg">
+                {children}
+              </main>
+            </div>
             <Toaster />
           </QueryProvider>
         </NuqsAdapter>

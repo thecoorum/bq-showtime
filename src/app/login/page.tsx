@@ -67,7 +67,7 @@ const LoginPage = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-1">
                   <FormLabel>Email</FormLabel>
-                  <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                  <div className="flex flex-col items-center gap-2">
                     <div className="relative w-full">
                       <FormControl>
                         <EmailInput {...field} />
@@ -75,7 +75,7 @@ const LoginPage = () => {
                     </div>
                     <LoadingButton
                       disabled={!form.formState.isDirty || mutation.isPending}
-                      className="cursor-pointer"
+                      className="w-full cursor-pointer"
                       loading={mutation.isPending}
                     >
                       Continue

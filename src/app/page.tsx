@@ -1,63 +1,33 @@
-"use client";
+import { HomePage } from "./home";
 
-import { useRef } from "react";
+import {
+  QueryClient,
+  HydrationBoundary,
+  dehydrate,
+} from "@tanstack/react-query";
+import { redirect } from "next/navigation";
 
-import { Player, type PlayerRef } from "@remotion/player";
-import { Play } from "lucide-react";
+import { useUpcomingSession } from "@/queries/upcoming-session";
 
-import { usePlayer } from "@/hooks/use-player";
+import type { UpcomingSessionResponse } from "@/actions/sessions";
 
-import { Component as Composition } from "@/remotion/root";
+const Home = async () => {
+  const queryClient = new QueryClient();
 
-import { DURATION_IN_FRAMES } from "@/types/constants";
+  await queryClient.prefetchQuery(useUpcomingSession());
 
-const Home = () => {
-  const playerRef = useRef<PlayerRef>(null);
+  const session = (await queryClient.getQueryData([
+    "upcoming-session",
+  ])) as UpcomingSessionResponse;
 
-  const { isPlaying } = usePlayer(playerRef);
-
-  const handlePlay = () => {
-    playerRef.current?.play();
-  };
+  if (!session) {
+    redirect("/sessions/new");
+  }
 
   return (
-    <div className="flex flex-col justify-center items-center h-[100svh] relative bg-black">
-      <Player
-        ref={playerRef}
-        component={Composition}
-        compositionWidth={1920}
-        compositionHeight={1080}
-        className="!w-full !h-auto aspect-video"
-        durationInFrames={DURATION_IN_FRAMES}
-        fps={30}
-        inputProps={{
-          participants: [
-            {
-              department: "Marketing",
-              name: "Nathan Crossley",
-            },
-            {
-              department: "Engineering",
-              name: "Yaroslav Vovchenko",
-            },
-            {
-              department: "Engineering",
-              name: "Filip Defar",
-            },
-          ],
-          author: "Johan van Zonneveld",
-        }}
-        clickToPlay
-        doubleClickToFullscreen
-        acknowledgeRemotionLicense
-      />
-      {!isPlaying && (
-        <Play
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-white size-8"
-          onClick={handlePlay}
-        />
-      )}
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomePage />
+    </HydrationBoundary>
   );
 };
 

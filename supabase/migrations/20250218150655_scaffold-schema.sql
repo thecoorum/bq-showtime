@@ -47,8 +47,8 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_create_user();
 
--- Scaffold showtimes table
-create table public.showtimes (
+-- Scaffold sessions table
+create table public.sessions (
   id uuid not null default uuid_generate_v4() primary key,
   author_id uuid references public.users not null,
   starts_at timestamp with time zone not null,
@@ -56,17 +56,17 @@ create table public.showtimes (
   updated_at timestamp with time zone default now()
 );
 
-create trigger update_showtimes_modtime
-before update on showtimes
+create trigger update_sessions_modtime
+before update on sessions
 for each row execute function update_modified_column();
 
 -- Scaffold participants table
 create table public.participants (
-  showtime_id uuid references public.showtimes not null,
+  session_id uuid references public.sessions not null,
   user_id uuid references public.users not null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now(),
-  primary key (showtime_id, user_id)
+  primary key (session_id, user_id)
 );
 
 create trigger update_participants_modtime
