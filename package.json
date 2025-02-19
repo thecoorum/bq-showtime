@@ -69,6 +69,7 @@
     "render": "remotion render",
     "db:start": "npx supabase start",
     "db:stop": "npx supabase stop",
+    "db:restart": "npx supabase stop && npx supabase start",
     "db:reset": "npx supabase db reset",
     "db:migrate": "npx supabase db reset && npx supabase gen types --lang=typescript --local > src/database.types.ts",
     "db:migration:new": "npx supabase migration new"
