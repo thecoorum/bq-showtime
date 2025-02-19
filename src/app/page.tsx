@@ -49,6 +49,7 @@ const Home = () => {
         }}
         clickToPlay
         doubleClickToFullscreen
+        acknowledgeRemotionLicense
       />
       {!isPlaying && (
         <Play
