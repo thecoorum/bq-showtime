@@ -58,18 +58,21 @@ export type Database = {
       participants: {
         Row: {
           created_at: string | null
+          position: number
           session_id: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          position?: number
           session_id: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
+          position?: number
           session_id?: string
           updated_at?: string | null
           user_id?: string
@@ -125,6 +128,7 @@ export type Database = {
       }
       users: {
         Row: {
+          auth_id: string | null
           created_at: string | null
           department_id: string | null
           id: string
@@ -132,13 +136,15 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          auth_id?: string | null
           created_at?: string | null
           department_id?: string | null
-          id: string
+          id?: string
           name?: string | null
           updated_at?: string | null
         }
         Update: {
+          auth_id?: string | null
           created_at?: string | null
           department_id?: string | null
           id?: string

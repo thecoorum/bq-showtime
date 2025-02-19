@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getUpcomingFriday } from "@/lib/utils";
 
 import type { Tables } from "@/database.types";
+import { UpcomingSessionFormSchema } from "@/app/home";
 
 export interface SessionResponse extends Tables<"sessions"> {
   participants: Tables<"participants">[];
@@ -14,6 +15,10 @@ export interface UpcomingSessionResponse extends Tables<"sessions"> {
 }
 
 export interface CreateSessionResponse {
+  id: string;
+}
+
+export interface UpdateSessionResponse {
   id: string;
 }
 
@@ -121,4 +126,60 @@ export const createSession = async (data): Promise<CreateSessionResponse> => {
   return {
     id: session.data.id,
   };
+};
+
+export const updateSession = async (
+  id: string,
+  data: UpcomingSessionFormSchema,
+) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const profile = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (profile.error) {
+    throw new Error(profile.error.message);
+  }
+
+  const sessionReq = supabase
+    .from("sessions")
+    .update({
+      author_id: profile.data.id,
+    })
+    .eq("id", id)
+    .select("id")
+    .single();
+  const participantsReq = supabase.from("participants").upsert(
+    data.participants.map((participant, index) => ({
+      session_id: id,
+      user_id: participant,
+      position: index + 1,
+    })),
+  );
+
+  const [session, participants] = await Promise.all([
+    sessionReq,
+    participantsReq,
+  ]);
+
+  if (session.error || participants.error) {
+    throw new Error(
+      [session.error?.message, participants.error?.message]
+        .filter(Boolean)
+        .join(", "),
+    );
+  }
+
+  return { id: session.data.id };
 };

@@ -21,7 +21,8 @@ for each row execute function update_modified_column();
 
 -- Scaffold users table
 create table public.users (
-  id uuid references auth.users not null primary key,
+  id uuid not null default uuid_generate_v4() primary key,
+  auth_id uuid references auth.users,
   name text,
   department_id uuid references public.departments,
   created_at timestamp with time zone default now(),
@@ -36,7 +37,7 @@ for each row execute function update_modified_column();
 create function public.handle_create_user()
 returns trigger as $$
 begin
-  insert into public.users (id)
+  insert into public.users (auth_id)
   values (new.id);
   return new;
 end;
@@ -64,6 +65,7 @@ for each row execute function update_modified_column();
 create table public.participants (
   session_id uuid references public.sessions not null,
   user_id uuid references public.users not null,
+  position integer not null default 1,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now(),
   primary key (session_id, user_id)
