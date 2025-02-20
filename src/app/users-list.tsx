@@ -84,7 +84,7 @@ export const UsersList = ({
           className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0"
           align="start"
         >
-          <Command>
+          <Command loop>
             <CommandInput placeholder="Find employee" />
             <CommandList>
               <CommandEmpty>No employees found.</CommandEmpty>
