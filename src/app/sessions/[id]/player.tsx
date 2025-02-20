@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Countdown } from "./countdown";
 
 import { Player, type PlayerRef } from "@remotion/player";
 import { Play, Loader2 } from "lucide-react";
@@ -15,8 +16,16 @@ import { Composition } from "@/remotion/composition";
 
 import { DURATION_IN_FRAMES } from "@/types/constants";
 
-export const SessionPlayer = ({ id }: { id: string }) => {
+export const SessionPlayer = ({
+  id,
+  countdown,
+}: {
+  id: string;
+  countdown: number;
+}) => {
   const playerRef = useRef<PlayerRef>(null);
+
+  const [isCountdownVisible, setCountdownVisible] = useState(countdown > 0);
 
   const sessionQuery = useQuery(useSession(id));
 
@@ -26,12 +35,20 @@ export const SessionPlayer = ({ id }: { id: string }) => {
     playerRef.current?.play();
   };
 
+  const handleCountdownFinish = () => {
+    setCountdownVisible(false);
+  };
+
   if (!sessionQuery.data) {
     return (
       <div className="flex justify-center items-center h-full">
         <Loader2 className="animate-spin text-white" />
       </div>
     );
+  }
+
+  if (isCountdownVisible) {
+    return <Countdown value={countdown} onFinish={handleCountdownFinish} />;
   }
 
   return (

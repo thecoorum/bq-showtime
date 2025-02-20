@@ -6,6 +6,7 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
+import { differenceInSeconds } from "date-fns";
 
 import { useSession } from "@/queries/session";
 
@@ -31,9 +32,14 @@ const SessionPage = async ({ params }: { params: Promise<{ id: string }> }) => {
     redirect("/");
   }
 
+  const difference = differenceInSeconds(
+    session.starts_at,
+    new Date().toISOString(),
+  );
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <SessionPlayer id={id} />
+      <SessionPlayer id={id} countdown={difference} />
     </HydrationBoundary>
   );
 };
