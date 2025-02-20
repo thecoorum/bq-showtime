@@ -11,7 +11,7 @@ export const EmailInput = ({
   <div className="relative">
     <Input
       className={cn("peer ps-9", className)}
-      placeholder="yaroslav@booqable.com"
+      placeholder="youremail@booqable.com"
       type="email"
       {...props}
     />
