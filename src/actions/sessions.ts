@@ -52,7 +52,8 @@ export const getSession = async (id: string): Promise<SessionResponse> => {
   const participantsReq = supabase
     .from("participants")
     .select("...users(name, department:departments(name))")
-    .eq("session_id", id);
+    .eq("session_id", id)
+    .order("position", { ascending: true });
 
   const [session, participants] = await Promise.all([
     sessionReq,
