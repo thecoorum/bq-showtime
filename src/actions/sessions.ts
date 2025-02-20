@@ -1,5 +1,7 @@
 "use server";
 
+import { diff } from "radash";
+
 import { createClient } from "@/lib/supabase/server";
 import { getUpcomingFriday } from "@/lib/utils";
 
@@ -183,6 +185,31 @@ export const updateSession = async (
     throw new Error(profile.error.message);
   }
 
+  const remoteParticipants = await supabase
+    .from("participants")
+    .select("user_id")
+    .eq("session_id", id);
+
+  if (remoteParticipants.error) {
+    throw new Error(remoteParticipants.error.message);
+  }
+
+  const deletedParticipants = diff(
+    remoteParticipants.data.map((participant) => participant.user_id),
+    data.participants,
+  );
+
+  if (deletedParticipants.length) {
+    const { error } = await supabase
+      .from("participants")
+      .delete()
+      .in("user_id", deletedParticipants);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+
   const sessionReq = supabase
     .from("sessions")
     .update({
@@ -191,7 +218,7 @@ export const updateSession = async (
     .eq("id", id)
     .select("id")
     .single();
-  const participantsReq = supabase.from("participants").upsert(
+  const upsertParticipantsReq = supabase.from("participants").upsert(
     data.participants.map((participant, index) => ({
       session_id: id,
       user_id: participant,
@@ -201,7 +228,7 @@ export const updateSession = async (
 
   const [session, participants] = await Promise.all([
     sessionReq,
-    participantsReq,
+    upsertParticipantsReq,
   ]);
 
   if (session.error || participants.error) {
