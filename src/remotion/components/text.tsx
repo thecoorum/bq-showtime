@@ -44,23 +44,29 @@ export const Text = ({
         <div className="relative">
           <p
             style={{ opacity: overlay }}
-            className="font-itc font-normal text-[#B0AEB0] text-xl uppercase absolute top-0 left-0"
+            className="font-itc font-normal text-[#B0AEB0] text-xl uppercase absolute top-0 left-0 cursor-default"
           >
             {department}
           </p>
           <p
             style={{ opacity }}
-            className="font-itc font-normal text-[#A25247] text-xl uppercase"
+            className="font-itc font-normal text-[#A25247] text-xl uppercase cursor-default"
           >
             {department}
           </p>
         </div>
       )}
       <div className="relative">
-        <p style={{ opacity: overlay }} className="font-itc font-bold text-[#B0AEB0] text-6xl uppercase absolute top-0 left-0">
+        <p
+          style={{ opacity: overlay }}
+          className="font-itc font-bold text-[#B0AEB0] text-6xl uppercase absolute top-0 left-0 cursor-default"
+        >
           {name}
         </p>
-        <p style={{ opacity }} className="font-itc font-bold text-[#A25247] text-6xl uppercase">
+        <p
+          style={{ opacity }}
+          className="font-itc font-bold text-[#A25247] text-6xl uppercase cursor-default"
+        >
           {name}
         </p>
       </div>
