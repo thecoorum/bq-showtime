@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
-import type { LoginConfirmFormSchema } from "@/app/login/confirm/page";
+import type { LoginConfirmFormSchema } from "@/app/login/confirm/schema";
 
 export const confirm = async (data: LoginConfirmFormSchema) => {
   const supabase = await createClient();

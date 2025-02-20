@@ -26,7 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useUsers } from "@/queries/users";
 import { useFormContext } from "react-hook-form";
 
-import type { UpcomingSessionFormSchema } from "@/app/home";
+import type { UpcomingSessionFormSchema } from "@/app/schema";
 
 export const UsersList = ({
   onCreateClick,

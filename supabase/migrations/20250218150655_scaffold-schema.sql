@@ -24,7 +24,7 @@ create table public.users (
   id uuid not null default uuid_generate_v4() primary key,
   auth_id uuid references auth.users,
   name text,
-  department_id uuid references public.departments,
+  department_id uuid references public.departments on delete set null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
@@ -34,7 +34,7 @@ before update on users
 for each row execute function update_modified_column();
 
 -- Function to insert user profile on auth user created
-create function public.handle_create_user()
+create or replace function public.handle_create_user()
 returns trigger as $$
 begin
   insert into public.users (auth_id)
@@ -51,7 +51,7 @@ for each row execute procedure public.handle_create_user();
 -- Scaffold sessions table
 create table public.sessions (
   id uuid not null default uuid_generate_v4() primary key,
-  author_id uuid references public.users not null,
+  author_id uuid not null references public.users on delete cascade,
   starts_at timestamp with time zone not null,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
@@ -63,8 +63,8 @@ for each row execute function update_modified_column();
 
 -- Scaffold participants table
 create table public.participants (
-  session_id uuid references public.sessions not null,
-  user_id uuid references public.users not null,
+  session_id uuid not null references public.sessions on delete cascade,
+  user_id uuid not null references public.users on delete cascade,
   position integer not null default 1,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now(),

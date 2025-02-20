@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getUpcomingFriday } from "@/lib/utils";
 
 import type { Tables } from "@/database.types";
-import type { UpcomingSessionFormSchema } from "@/app/home";
+import type { UpcomingSessionFormSchema } from "@/app/schema";
+import type { NewSessionFormSchema } from "@/app/sessions/new/schema";
 
 export interface SessionResponse extends Tables<"sessions"> {
   author: {
@@ -31,7 +32,6 @@ export interface UpdateSessionResponse {
 }
 
 export const getSession = async (id: string): Promise<SessionResponse> => {
-  console.log("fetching session", id);
   const supabase = await createClient();
 
   const {
@@ -58,7 +58,6 @@ export const getSession = async (id: string): Promise<SessionResponse> => {
   ]);
 
   if (session.error || participants.error) {
-    console.log("session error", session.error, participants.error);
     throw new Error(
       [session.error?.message, participants.error?.message]
         .filter(Boolean)
@@ -107,7 +106,9 @@ export const getUpcomingSession =
     return { ...session.data, participants: participants.data };
   };
 
-export const createSession = async (data): Promise<CreateSessionResponse> => {
+export const createSession = async (
+  data: NewSessionFormSchema,
+): Promise<CreateSessionResponse> => {
   const supabase = await createClient();
 
   const {
@@ -118,10 +119,20 @@ export const createSession = async (data): Promise<CreateSessionResponse> => {
     throw new Error("Unauthorized");
   }
 
+  const profile = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (profile.error) {
+    throw new Error(profile.error.message);
+  }
+
   const session = await supabase
     .from("sessions")
     .insert({
-      author_id: user.id,
+      author_id: profile.data.id,
       starts_at: getUpcomingFriday(new Date()),
     })
     .select("id")
@@ -131,7 +142,13 @@ export const createSession = async (data): Promise<CreateSessionResponse> => {
     throw new Error(session.error.message);
   }
 
-  const participants = await supabase.from("participants").insert([]);
+  const participants = await supabase.from("participants").insert(
+    data.participants.map((id, index) => ({
+      user_id: id,
+      session_id: session.data.id,
+      position: index + 1,
+    })),
+  );
 
   if (participants.error) {
     throw new Error(participants.error.message);

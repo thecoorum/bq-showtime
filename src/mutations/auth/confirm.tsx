@@ -3,7 +3,7 @@ import { confirm } from "@/actions/auth/confirm";
 import { toast } from "sonner";
 import { CircleX } from "lucide-react";
 
-import type { LoginConfirmFormSchema } from "@/app/login/confirm/page";
+import type { LoginConfirmFormSchema } from "@/app/login/confirm/schema";
 
 export const useConfirm = () => {
   return {

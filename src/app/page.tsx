@@ -8,13 +8,17 @@ import {
 import { redirect } from "next/navigation";
 
 import { useUpcomingSession } from "@/queries/upcoming-session";
+import { useUsers } from "@/queries/users";
 
 import type { UpcomingSessionResponse } from "@/actions/sessions";
 
 const Home = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(useUpcomingSession());
+  await Promise.all([
+    queryClient.prefetchQuery(useUpcomingSession()),
+    queryClient.prefetchQuery(useUsers()),
+  ])
 
   const session = (await queryClient.getQueryData([
     "upcoming-session",

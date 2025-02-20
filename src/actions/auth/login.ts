@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
-import type { LoginFormSchema } from "@/app/login/page";
+import type { LoginFormSchema } from "@/app/login/schema";
 
 export const login = async (data: LoginFormSchema) => {
   const supabase = await createClient();

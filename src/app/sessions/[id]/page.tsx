@@ -5,7 +5,7 @@ import {
   HydrationBoundary,
   dehydrate,
 } from "@tanstack/react-query";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { useSession } from "@/queries/session";
 
@@ -27,10 +27,8 @@ const SessionPage = async ({ params }: { params: Promise<{ id: string }> }) => {
     id,
   ])) as SessionResponse;
 
-  console.log("session", session);
-
   if (!session) {
-    notFound();
+    redirect("/");
   }
 
   return (

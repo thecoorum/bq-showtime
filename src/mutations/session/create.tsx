@@ -1,24 +1,25 @@
-import { updateSession } from "@/actions/sessions";
+import { createSession } from "@/actions/sessions";
 
 import { toast } from "sonner";
 import { CircleX } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 
-import type { UpcomingSessionFormSchema } from "@/app/schema";
+import type { NewSessionFormSchema } from "@/app/sessions/new/schema";
+import type { CreateSessionResponse } from "@/actions/sessions";
 
-export const useUpdate = (id: string) => {
+export const useCreate = () => {
   const router = useRouter();
 
   return {
-    mutationFn: async (data: UpcomingSessionFormSchema) => {
-      return updateSession(id, data);
+    mutationFn: async (data: NewSessionFormSchema) => {
+      return createSession(data);
     },
-    onSuccess: () => {
-      router.push(`/sessions/${id}`);
+    onSuccess: (data: CreateSessionResponse) => {
+      router.push(`/sessions/${data.id}`);
     },
     onError: (error: unknown) => {
-      toast.error("Session update failed", {
+      toast.error("Session creation failed", {
         description:
           error instanceof Error ? error.message : "Something went wrong...",
         className: "font-[family-name:var(--font-roboto-mono)]",

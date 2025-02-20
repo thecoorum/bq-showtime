@@ -59,8 +59,6 @@ const middleware = async (req: NextRequest) => {
       url.searchParams.set("redirect-url", redirectUrl);
     }
 
-    console.log("redirect to login");
-
     return NextResponse.redirect(url);
   }
 
@@ -68,8 +66,6 @@ const middleware = async (req: NextRequest) => {
     const url = req.nextUrl.clone();
 
     url.pathname = "/";
-
-    console.log("redirect to home");
 
     return NextResponse.redirect(url);
   }

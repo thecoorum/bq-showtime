@@ -3,7 +3,7 @@ import { login } from "@/actions/auth/login";
 import { toast } from "sonner";
 import { CircleX } from "lucide-react";
 
-import type { LoginFormSchema } from "@/app/login/page";
+import type { LoginFormSchema } from "@/app/login/schema";
 
 export const useLogin = () => {
   return {
