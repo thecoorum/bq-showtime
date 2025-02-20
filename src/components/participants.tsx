@@ -76,7 +76,10 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
     const nextIndex = index + (direction === "up" ? -1 : 1);
     const Icon = direction === "up" ? ArrowUp : ArrowDown;
 
-    form.setValue("participants", arrayMove(participants, index, nextIndex));
+    form.setValue("participants", arrayMove(participants, index, nextIndex), {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
 
     toast("Participant moved", {
       description: `${user?.name} was moved ${direction} in the queue for the upcoming session.`,
@@ -92,6 +95,10 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
     form.setValue(
       "participants",
       participants.filter((participant) => participant !== id),
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
     );
 
     toast("Participant removed", {

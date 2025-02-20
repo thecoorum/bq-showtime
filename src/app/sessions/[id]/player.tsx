@@ -11,8 +11,7 @@ import { usePlayer } from "@/hooks/use-player";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/queries/session";
 
-// Alias is not working on Vercel
-import { Component as Composition } from "../../../remotion/root";
+import { Composition } from "@/remotion/composition";
 
 import { DURATION_IN_FRAMES } from "@/types/constants";
 
