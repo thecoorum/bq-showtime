@@ -8,7 +8,7 @@ import type { LoginConfirmFormSchema } from "@/app/login/confirm/schema";
 export const useConfirm = () => {
   return {
     mutationFn: async (data: LoginConfirmFormSchema) => {
-      await confirm(data);
+      return confirm(data);
     },
     onError: (error: unknown) => {
       // Prevent showing the toast if the user is redirected

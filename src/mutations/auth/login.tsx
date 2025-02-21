@@ -8,7 +8,7 @@ import type { LoginFormSchema } from "@/app/login/schema";
 export const useLogin = () => {
   return {
     mutationFn: async (data: LoginFormSchema) => {
-      await login(data);
+      return login(data);
     },
     onError: (error: unknown) => {
       // Prevent showing the toast if the user is redirected
