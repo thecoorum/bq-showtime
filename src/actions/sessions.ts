@@ -1,6 +1,7 @@
 "use server";
 
 import { diff } from "radash";
+import { subMinutes } from "date-fns";
 
 import { createClient } from "@/lib/supabase/server";
 import { getUpcomingFriday } from "@/lib/utils";
@@ -86,7 +87,7 @@ export const getUpcomingSession =
     const session = await supabase
       .from("sessions")
       .select()
-      .gte("starts_at", new Date().toISOString())
+      .gte("starts_at", subMinutes(new Date(), 60).toISOString())
       .order("starts_at", { ascending: true })
       .limit(1)
       .maybeSingle();
@@ -165,7 +166,7 @@ export const createSession = async (
 export const updateSession = async (
   id: string,
   data: UpcomingSessionFormSchema,
-) => {
+): Promise<UpdateSessionResponse> => {
   const supabase = await createClient();
 
   const {
@@ -211,6 +212,12 @@ export const updateSession = async (
     }
   }
 
+  const participantsData = data.participants.map((participant, index) => ({
+    session_id: id,
+    user_id: participant,
+    position: index + 1,
+  }));
+
   const sessionReq = supabase
     .from("sessions")
     .update({
@@ -219,13 +226,9 @@ export const updateSession = async (
     .eq("id", id)
     .select("id")
     .single();
-  const upsertParticipantsReq = supabase.from("participants").upsert(
-    data.participants.map((participant, index) => ({
-      session_id: id,
-      user_id: participant,
-      position: index + 1,
-    })),
-  );
+  const upsertParticipantsReq = supabase
+    .from("participants")
+    .upsert(participantsData);
 
   const [session, participants] = await Promise.all([
     sessionReq,
