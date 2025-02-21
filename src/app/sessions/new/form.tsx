@@ -61,7 +61,7 @@ export const SessionForm = () => {
           </div>
           <LoadingButton
             size="lg"
-            className="w-full cursor-pointer"
+            className="w-full"
             disabled={!form.formState.isValid}
             onClick={form.handleSubmit(handleFormSubmit)}
             loading={mutation.isPending}

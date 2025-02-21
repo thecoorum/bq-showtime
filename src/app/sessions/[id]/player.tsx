@@ -77,7 +77,6 @@ export const SessionPlayer = ({
           <Button
             size="lg"
             variant="outline"
-            className="cursor-pointer"
             onClick={handlePlay}
           >
             <Play className="text-white" />

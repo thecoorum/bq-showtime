@@ -64,7 +64,7 @@ export const LoginForm = () => {
                     </div>
                     <LoadingButton
                       disabled={!form.formState.isDirty || mutation.isPending}
-                      className="w-full cursor-pointer"
+                      className="w-full"
                       loading={mutation.isPending}
                     >
                       Continue

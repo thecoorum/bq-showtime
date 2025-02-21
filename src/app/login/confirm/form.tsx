@@ -91,7 +91,6 @@ export const ConfirmForm = () => {
                       </FormControl>
                     </div>
                     <LoadingButton
-                      className="cursor-pointer"
                       disabled={!form.formState.isDirty || mutation.isPending}
                       loading={mutation.isPending}
                     >

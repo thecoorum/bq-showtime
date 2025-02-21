@@ -72,7 +72,7 @@ export const UsersList = ({
             role="combobox"
             size="lg"
             aria-expanded={open}
-            className="cursor-pointer w-full justify-between bg-background px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20"
+            className="w-full justify-between bg-background px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20"
           >
             <span className="truncate">Add or create participant</span>
             <kbd className="inline-flex h-5 max-h-full items-center font-[inherit] text-xs font-medium text-muted-foreground/70">
