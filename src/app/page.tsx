@@ -1,4 +1,4 @@
-import { HomePage } from "./home";
+import { SessionForm } from "./form";
 
 import {
   QueryClient,
@@ -18,7 +18,7 @@ const Home = async () => {
   await Promise.all([
     queryClient.prefetchQuery(useUpcomingSession()),
     queryClient.prefetchQuery(useUsers()),
-  ])
+  ]);
 
   const session = (await queryClient.getQueryData([
     "upcoming-session",
@@ -30,7 +30,7 @@ const Home = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <HomePage />
+      <SessionForm />
     </HydrationBoundary>
   );
 };

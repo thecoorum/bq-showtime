@@ -41,12 +41,24 @@ import { toast } from "sonner";
 import { useFormContext } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useUsers } from "@/queries/users";
+import { useParticipantsQuery } from "@/hooks/use-participants-query";
 
 import { cn } from "@/lib/utils";
 
 import type { UpcomingSessionFormSchema } from "@/app/schema";
 
-const Participant = ({ id, index }: { id: string; index: number }) => {
+const Participant = ({
+  id,
+  index,
+  persist,
+}: {
+  id: string;
+  index: number;
+  persist?: boolean;
+}) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setParticipantsQuery] = useParticipantsQuery();
+
   const usersQuery = useQuery(useUsers());
 
   const {
@@ -74,9 +86,10 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
 
   const handleMove = (direction: "up" | "down") => {
     const nextIndex = index + (direction === "up" ? -1 : 1);
+    const nextParticipants = arrayMove(participants, index, nextIndex);
     const Icon = direction === "up" ? ArrowUp : ArrowDown;
 
-    form.setValue("participants", arrayMove(participants, index, nextIndex), {
+    form.setValue("participants", nextParticipants, {
       shouldDirty: true,
       shouldValidate: true,
     });
@@ -89,17 +102,20 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
       },
       icon: <Icon className="size-4 text-black mr-2" />,
     });
+
+    if (!persist) return;
+
+    setParticipantsQuery(nextParticipants);
   };
 
   const handleDelete = () => {
-    form.setValue(
-      "participants",
-      participants.filter((participant) => participant !== id),
-      {
-        shouldDirty: true,
-        shouldValidate: true,
-      },
+    const nextParticipants = participants.filter(
+      (participant) => participant !== id,
     );
+    form.setValue("participants", nextParticipants, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
 
     toast("Participant removed", {
       description: `${user?.name} was removed from the upcoming session.`,
@@ -109,6 +125,10 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
       },
       icon: <UserMinus className="size-4 text-black mr-2" />,
     });
+
+    if (!persist) return;
+
+    setParticipantsQuery(nextParticipants);
   };
 
   if (!user) return null;
@@ -175,7 +195,10 @@ const Participant = ({ id, index }: { id: string; index: number }) => {
   );
 };
 
-export const Participants = () => {
+export const Participants = ({ persist }: { persist?: boolean }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setParticipantsQuery] = useParticipantsQuery();
+
   const form = useFormContext<UpcomingSessionFormSchema>();
 
   const participants = form.watch("participants");
@@ -194,11 +217,16 @@ export const Participants = () => {
       const oldIndex = participants.indexOf(String(active.id));
       const newIndex = participants.indexOf(String(over.id));
 
-      form.setValue(
-        "participants",
-        arrayMove(participants, oldIndex, newIndex),
-        { shouldValidate: true, shouldDirty: true },
-      );
+      const nextParticipants = arrayMove(participants, oldIndex, newIndex);
+
+      form.setValue("participants", nextParticipants, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+
+      if (!persist) return;
+
+      setParticipantsQuery(nextParticipants);
     }
   };
 
@@ -214,7 +242,7 @@ export const Participants = () => {
         strategy={verticalListSortingStrategy}
       >
         {participants.map((id, index) => (
-          <Participant key={id} id={id} index={index} />
+          <Participant key={id} id={id} index={index} persist={persist} />
         ))}
       </SortableContext>
     </DndContext>

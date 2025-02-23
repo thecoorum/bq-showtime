@@ -87,7 +87,7 @@ export const getUpcomingSession =
     const session = await supabase
       .from("sessions")
       .select()
-      .gte("starts_at", subMinutes(new Date(), 60).toISOString())
+      .gte("starts_at", subMinutes(new Date(), 30).toISOString())
       .order("starts_at", { ascending: true })
       .limit(1)
       .maybeSingle();

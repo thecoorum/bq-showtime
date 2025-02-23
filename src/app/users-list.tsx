@@ -25,15 +25,22 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { useUsers } from "@/queries/users";
 import { useFormContext } from "react-hook-form";
+import { useParticipantsQuery } from "@/hooks/use-participants-query";
 
 import type { UpcomingSessionFormSchema } from "@/app/schema";
+import type { User } from "@/actions/users";
 
 export const UsersList = ({
+  persist,
   onCreateClick,
 }: {
+  persist?: boolean;
   onCreateClick?: () => void;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setParticipantsQuery] = useParticipantsQuery();
 
   const usersQuery = useQuery(useUsers());
 
@@ -63,6 +70,48 @@ export const UsersList = ({
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  const handleParticipantToggle = (user: User) => {
+    let nextParticipants: string[] = [];
+
+    if (participants.includes(user.id)) {
+      nextParticipants = participants.filter((id) => id !== user.id);
+
+      form.setValue("participants", nextParticipants, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+
+      toast("Participant removed", {
+        description: `${user.name} was removed from the upcoming session.`,
+        className: "font-[family-name:var(--font-roboto-mono)]",
+        classNames: {
+          title: "text-sm font-bold",
+        },
+        icon: <UserMinus className="size-4 text-black mr-2" />,
+      });
+    } else {
+      nextParticipants = [...participants, user.id];
+
+      form.setValue("participants", nextParticipants, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+
+      toast("Participant added", {
+        description: `${user.name} was added to the upcoming session.`,
+        className: "font-[family-name:var(--font-roboto-mono)]",
+        classNames: {
+          title: "text-sm font-bold",
+        },
+        icon: <UserPlus className="size-4 text-black mr-2" />,
+      });
+    }
+
+    if (!persist) return;
+
+    setParticipantsQuery(nextParticipants);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <Popover open={open} onOpenChange={setOpen}>
@@ -90,58 +139,18 @@ export const UsersList = ({
               <CommandEmpty>No employees found.</CommandEmpty>
               {Object.entries(usersByDepartment).map(([department, users]) => (
                 <CommandGroup key={department} heading={department}>
-                  {(users || []).map((user) => {
-                    const toggle = () => {
-                      if (participants.includes(user.id)) {
-                        form.setValue(
-                          "participants",
-                          participants.filter((id) => id !== user.id),
-                          { shouldValidate: true, shouldDirty: true },
-                        );
-
-                        toast("Participant removed", {
-                          description: `${user.name} was removed from the upcoming session.`,
-                          className:
-                            "font-[family-name:var(--font-roboto-mono)]",
-                          classNames: {
-                            title: "text-sm font-bold",
-                          },
-                          icon: (
-                            <UserMinus className="size-4 text-black mr-2" />
-                          ),
-                        });
-                      } else {
-                        form.setValue(
-                          "participants",
-                          [...participants, user.id],
-                          { shouldValidate: true, shouldDirty: true },
-                        );
-
-                        toast("Participant added", {
-                          description: `${user.name} was added to the upcoming session.`,
-                          className:
-                            "font-[family-name:var(--font-roboto-mono)]",
-                          classNames: {
-                            title: "text-sm font-bold",
-                          },
-                          icon: <UserPlus className="size-4 text-black mr-2" />,
-                        });
-                      }
-                    };
-
-                    return (
-                      <CommandItem
-                        key={user.id}
-                        value={user.name || user.id}
-                        onSelect={toggle}
-                      >
-                        {user.name}
-                        {participants.includes(user.id) && (
-                          <Check className="size-4 ml-auto" />
-                        )}
-                      </CommandItem>
-                    );
-                  })}
+                  {(users || []).map((user) => (
+                    <CommandItem
+                      key={user.id}
+                      value={user.name || user.id}
+                      onSelect={() => handleParticipantToggle(user)}
+                    >
+                      {user.name}
+                      {participants.includes(user.id) && (
+                        <Check className="size-4 ml-auto" />
+                      )}
+                    </CommandItem>
+                  ))}
                 </CommandGroup>
               ))}
               <CommandSeparator />

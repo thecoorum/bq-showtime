@@ -16,9 +16,9 @@ import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-import { schema, type UpcomingSessionFormSchema } from "@/app/schema"
+import { schema, type UpcomingSessionFormSchema } from "@/app/schema";
 
-export const HomePage = () => {
+export const SessionForm = () => {
   const upcomingSessionQuery = useQuery(useUpcomingSession());
 
   const form = useForm<UpcomingSessionFormSchema>({
@@ -52,7 +52,7 @@ export const HomePage = () => {
   return (
     <Form {...form}>
       <div className="flex flex-col justify-center items-center h-full">
-        <div className="flex flex-col gap-6 max-w-[400px] w-full">
+        <div className="flex flex-col gap-6 max-w-[400px] w-full max-h-[90svh] h-full">
           <h2 className="text-4xl font-bold">Upcoming session</h2>
           <div className="flex flex-col gap-2">
             <p>Session participants</p>
@@ -60,7 +60,7 @@ export const HomePage = () => {
           </div>
           <div
             className={cn(
-              "flex flex-col h-[60svh] rounded-lg relative border bg-background overflow-y-auto p-2 gap-2",
+              "flex flex-col flex-1 rounded-lg relative border bg-background overflow-y-auto p-2 gap-2",
               !participants.length && "justify-center items-center",
             )}
           >
