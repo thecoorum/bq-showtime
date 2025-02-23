@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { SessionForm } from "./form";
 
 import {
@@ -30,7 +32,9 @@ const Home = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <SessionForm />
+      <Suspense>
+        <SessionForm />
+      </Suspense>
     </HydrationBoundary>
   );
 };
