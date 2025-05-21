@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { format, isFriday } from "date-fns";
 import { tz } from "@date-fns/tz";
 
 import { useForm } from "react-hook-form";
@@ -67,8 +67,7 @@ export const SessionForm = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <p className="text-muted-foreground/60 text-sm underline cursor-pointer">
-                    This session will be scheduled for the next Friday at 13:30
-                    UTC.
+                    This session is scheduled for {isFriday(new Date()) ? "today" : "the Friday"} at 13:30 UTC.
                   </p>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
