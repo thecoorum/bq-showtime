@@ -6,11 +6,19 @@ import { LoadingButton } from "@/components/button-with-loading";
 import { Form } from "@/components/ui/form";
 import { UsersList } from "@/app/users-list";
 import { Participants } from "@/components/participants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleAlert } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
+import { format } from "date-fns";
+import { tz } from "@date-fns/tz";
 
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -19,7 +27,7 @@ import { useUpcomingSession } from "@/queries/upcoming-session";
 import { useQueryState } from "nuqs";
 import { useParticipantsQuery } from "@/hooks/use-participants-query";
 
-import { cn } from "@/lib/utils";
+import { cn, getUpcomingFriday } from "@/lib/utils";
 
 import { schema, type NewSessionFormSchema } from "@/app/sessions/new/schema";
 
@@ -35,9 +43,7 @@ export const SessionForm = () => {
   const upcomingSessionQuery = useQuery(useUpcomingSession());
 
   const form = useForm<NewSessionFormSchema>({
-    defaultValues: {
-      participants: participantsQuery || [],
-    },
+    defaultValues: { participants: participantsQuery || [] },
     resolver: zodResolver(schema),
   });
 
@@ -57,7 +63,42 @@ export const SessionForm = () => {
     <Form {...form}>
       <div className="flex flex-col justify-center items-center h-full">
         <motion.div className="flex flex-col gap-6 max-w-[400px] w-full max-h-[90svh] h-full">
-          <h2 className="text-4xl font-bold">Create session</h2>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-4xl font-bold">Create session</h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-muted-foreground/60 text-sm underline cursor-pointer">
+                    This session will be scheduled for the next Friday at 13:30
+                    UTC.
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-background/60">
+                        Formatted value (UTC):
+                      </span>
+                      <span className="text-xs text-background">
+                        {format(getUpcomingFriday(), "d MMMM yyyy HH:mm:ss", {
+                          in: tz("UTC"),
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-background/60">
+                        Formatted value (
+                        {Intl.DateTimeFormat().resolvedOptions().timeZone}):
+                      </span>
+                      <span className="text-xs text-background">
+                        {format(getUpcomingFriday(), "d MMMM yyyy HH:mm:ss")}
+                      </span>
+                    </div>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex flex-col gap-2">
             <p>Session participants</p>
             <UsersList persist />
