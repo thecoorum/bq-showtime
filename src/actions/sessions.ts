@@ -137,7 +137,7 @@ export const createSession = async (
     .from("sessions")
     .insert({
       author_id: profile.data.id,
-      starts_at: getUpcomingFriday(new Date()),
+      starts_at: getUpcomingFriday(),
     })
     .select("id")
     .single();
